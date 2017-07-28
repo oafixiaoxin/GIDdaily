@@ -44,3 +44,8 @@ $app->group(['prefix' => 'api/v1'], function($app)
 	
 //	$app->get('/ysxTest', 'ExampleController@ysxTest');
 });
+
+$app->group(['prefix' => 'api2/v1'], function($app)
+{
+	$app->get('/getEmptyTables', 'TableController@getEmptyTables');
+});
