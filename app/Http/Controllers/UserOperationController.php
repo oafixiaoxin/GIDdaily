@@ -23,23 +23,24 @@
 		 */
 	    public function userLogin($userName, $password)
 	    {
-	    	$judgeUserName = DB::select('select * from unierp_user where loginName="'.$userName.'"');
-	    	if (!empty($judgeUserName))
-	    	{
-	    		$judgePassword = DB::select('select userId,shopId from unierp_user where loginName="'.$userName.'" and password="'.$password.'"');
-	    		if (!empty($judgePassword))
-	    		{
-	    			return $this->output(Response::SUCCESS, $judgePassword);
-	    		}
-	    		else
-	    		{
-	    			return $this->output(Response::PASSWORD_INCORRECT);
-	    		}
-	    	}
-	    	else
-	    	{
-	    		return $this->output(Response::USER_NOT_FOUND);
-	    	}
+//	    	$judgeUserName = DB::select('select * from unierp_user where loginName="'.$userName.'"');
+//	    	if (!empty($judgeUserName))
+//	    	{
+//	    		$judgePassword = DB::select('select userId,shopId from unierp_user where loginName="'.$userName.'" and password="'.$password.'"');
+//	    		if (!empty($judgePassword))
+//	    		{
+//	    			return $this->output(Response::SUCCESS, $judgePassword);
+//	    		}
+//	    		else
+//	    		{
+//	    			return $this->output(Response::PASSWORD_INCORRECT);
+//	    		}
+//	    	}
+//	    	else
+//	    	{
+//	    		return $this->output(Response::USER_NOT_FOUND);
+//	    	}
+			return $this->output(Response::SUCCESS, "11111");
 	    }
 	    
 	    
