@@ -42,6 +42,8 @@ $app->group(['prefix' => 'api/v1'], function($app)
 	
 	$app->get('/getDataForAnalyze/{year}/{month}/{day}/{shopId}/{type}', 'AnalyzeController@getDataForAnalyze');
 	
+	$app->get('/getEmptyTables', 'TableController@getEmptyTables');
+	
 //	$app->get('/ysxTest', 'ExampleController@ysxTest');
 });
 
