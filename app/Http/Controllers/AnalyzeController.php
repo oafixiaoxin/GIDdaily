@@ -26,7 +26,8 @@
 	    	$d = strtotime($dateStr);
 	    	if ( $type == 'date' )
 	    	{
-	    		$dateCount = date('t',$d);
+//	    		$dateCount = date('t',$d);
+				$dateCount = $day;
 	    	}
 	    	else if ( $type == 'week' )
 	    	{
@@ -36,42 +37,52 @@
 	    	{
 	    		$dateCount = 12;
 	    	}
-			
-			$retAry = array();
-			for ( $i = 0 ; $i < $dateCount ; $i++ )
-			{
-				if ( $type == 'year' )
-				{
-					$res = DB::select('SELECT IFNULL(SUM(ta.`turnover`), 0) AS dayTurnover,tb.`year`,tb.`month`,tb.`day` FROM unierp_facts ta
+	    	
+	    	$tempAry = array();
+	    	for ( $i = 0 ; $i < $dateCount ; $i++ )
+	    	{
+	    		array_push($tempAry, 0);		
+	    	}
+	    	
+	    	if ( $type == 'year')
+	    	{
+	    		$res = DB::select('SELECT IFNULL(SUM(ta.`turnover`), 0) AS dayTurnover,tb.`year`,tb.`month`,tb.`day` FROM unierp_facts ta
 LEFT JOIN unierp_time tb ON ta.timeId=tb.`id`
-WHERE 1=1 AND ta.shopId=? AND tb.`year`=? AND tb.`month`=?', [$shopId, $year, $i+1]);
-				}
-				else if ( $type == 'week' )
-				{
-					$res = DB::select('SELECT IFNULL(SUM(ta.`turnover`), 0) AS dayTurnover,tb.`year`,tb.`month`,tb.`day` FROM unierp_facts ta
+WHERE 1=1 AND ta.shopId=:shopId AND tb.`year`=:year
+GROUP BY tb.`month`', ['shopId' => $shopId, 'year' => $year]);
+	    	}
+	    	else if ( $type == 'week' )
+	    	{
+	    		$res = DB::select('SELECT IFNULL(SUM(ta.`turnover`), 0) AS dayTurnover,tb.`year`,tb.`month`,tb.`day`,tb.`week` FROM unierp_facts ta
 LEFT JOIN unierp_time tb ON ta.timeId=tb.`id`
-WHERE 1=1 AND ta.shopId=? AND tb.`year`=? AND tb.`month`=? AND tb.`week`=?', [$shopId, $year, $month, $i+1]);
-				}
-				else if ( $type == 'date' )
-				{
-					$res = DB::select('SELECT IFNULL(SUM(ta.`turnover`), 0) AS dayTurnover,tb.`year`,tb.`month`,tb.`day` FROM unierp_facts ta
+WHERE 1=1 AND ta.shopId=:shopId AND tb.`year`=:year AND tb.`month`=:month
+GROUP BY tb.`week`', ['shopId' => $shopId, 'year' => $year, 'month' => $month]);
+	    	}
+	    	else if ( $type == 'date' )
+	    	{
+	    		$res = DB::select('SELECT IFNULL(SUM(ta.`turnover`), 0) AS dayTurnover,tb.`year`,tb.`month`,tb.`day` FROM unierp_facts ta
 LEFT JOIN unierp_time tb ON ta.timeId=tb.`id`
-WHERE 1=1 AND ta.shopId=? AND tb.`year`=? AND tb.`month`=? AND tb.`day`=?', [$shopId, $year, $month, $i+1]);
-				}
-				
-				foreach ( $res as $r )
-				{
-					if ( $r->dayTurnover == 0 )
-					{
-						array_push($retAry, 0);
-					}
-					else
-					{
-						array_push($retAry, $r->dayTurnover);
-					}
-				}
-			}
-			return $this->output(Response::SUCCESS, $retAry);
+WHERE 1=1 AND ta.shopId=:shopId AND tb.`year`=:year AND tb.`month`=:month
+GROUP BY tb.`day`', ['shopId' => $shopId, 'year' => $year, 'month' => $month]);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+	    	}
+	    	
+	    	foreach ( $res as $r )
+	    	{
+	    		if ( $type == 'year' )
+	    		{
+	    			$tempAry[$r->month-1] = $r->dayTurnover;
+	    		}
+	    		else if ( $type == 'week' )
+	    		{
+	    			$tempAry[$r->week-1] = $r->dayTurnover;
+	    		}
+	    		else if ( $type == 'date' )
+	    		{
+	    			$tempAry[$r->day-1] = $r->dayTurnover;
+	    		}
+	    	}
+	    	
+	    	return $this->output(Response::SUCCESS, $tempAry);
 	    }
 	    
 	    
