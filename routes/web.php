@@ -35,6 +35,7 @@ $app->group(['prefix' => 'api/v1'], function($app)
 	$app->get('/getUserListForRank/{year}/{month}/{shopId}/{jobType}/{dataType}', 'UserOperationController@getUserListForRank');
 	$app->get('/getUserInfoForAnalyze/{userId}/{year}/{month}/{day}', 'UserOperationController@getUserInfoForAnalyze');
 	$app->get('/getUserInfoForPersonalRank/{userId}/{year}/{month}/{day}/{type}', 'UserOperationController@getUserInfoForPersonalRank');
+	$app->get('/ysxTest/{userId}/{year}/{month}/{day}/{type}/{from}/{to}', 'UserOperationController@ysxTest');
 	
 	$app->get('/getTarget/{type}/{shopId}/{year}/{month}/{day}', 'ChangeTargetController@getTarget');
 	$app->put('/updateShopTarget', 'ChangeTargetController@updateShopTarget');

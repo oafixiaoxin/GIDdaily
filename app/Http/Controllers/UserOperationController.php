@@ -285,7 +285,6 @@ WHERE 1=1 AND ta.`userId`="'.$userId.'"';
 	    		array_push($tempAry, 0);		
 	    	}
 	    	
-	    	$retAry = array();
 	    	$get = DB::select('SELECT ta.userId,tb.`year`,tb.`month`,tb.`day`,SUM(ta.turnover) AS turnover FROM unierp_facts ta
 LEFT JOIN unierp_time tb ON ta.timeId=tb.id
 WHERE 1=1 AND ta.userId=? AND tb.`year`=? AND tb.`month`=?
@@ -298,4 +297,48 @@ GROUP BY tb.`day`', [$userId, $year, $month]);
 			
 	    	return $this->output(Response::SUCCESS, $tempAry);
 	    }
+	    
+	    public function ysxTest( $userId, $year, $month, $day, $type, $from, $to )
+	    {
+	    	date_default_timezone_set('PRC'); 
+	    	
+	    	$today = date('Y-m-d');
+	    	if ( !empty($from) )
+	    	{
+	    		$f = explode('-', $from);
+	    	}
+	    	else
+	    	{
+	    		$f = explode('-', $today);
+	    	}
+	    	if ( !empty($to) )
+	    	{
+	    		$t = explode('-', $to);
+	    	}
+	    	else
+	    	{
+	    		$t = explode('-', $today);
+	    	}
+	    	
+	    	$tempAry = array();
+	    	for ( $i = 0 ; $i < 30 ; $i++ )
+	    	{
+	    		array_push($tempAry, 0);
+	    	}
+	    	
+	    	$get = DB::select('SELECT ta.userId,tb.`year`,tb.`month`,tb.`day`,SUM(ta.turnover) AS turnover FROM unierp_facts ta
+LEFT JOIN unierp_time tb ON ta.timeId=tb.id
+WHERE 1=1 AND ta.userId=? AND tb.`timestamp`>? and tb.`timestamp`<?
+GROUP BY tb.`day`
+LIMIT 0,30', [$userId, strtotime($from), strtotime($to)]);
+
+			foreach ( $get as $g )
+			{
+				$tempAry[$g->day] = $g->turnover;
+			}	
+			
+			return $this->output(Response::SUCCESS, $tempAry);    	
+	    	
+	    }
+	    
 	}
